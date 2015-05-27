@@ -83,6 +83,7 @@ def user_login(request):
             return redirect("organizer")
         else:
             # TODO: Make some message for this
+            request.session['message'] = {'type': 1, 'content': "Wrong username or password!"}
             login_error = "Wrong username or password!"
             return redirect("login")
 

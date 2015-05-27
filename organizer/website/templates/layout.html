@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cloud-Photos-Organizer</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static "styles/vendor/bootstrap.min.css" %}">
+	<link rel="stylesheet" type="text/css" href="{% static "styles/flat-ui.min.css" %}">
+	<link rel="stylesheet" type="text/css" href="{% static "styles/main.css" %}">
+
+</head>
+<body class="container-fluid">
+
+	<!-- Start navigation block-->
+	<nav class="navbar navbar-inverse navbar-embossed" style="border-radius: 0px;">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="{% url 'index' %}">CloudPic</a>
+	    </div>
+
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    		{% if user.is_authenticated %}
+    			<form class="navbar-form navbar-left" role="search">
+		            <div class="form-group">
+		              <input type="text" class="form-control" placeholder="Search for images">
+		            </div>
+	          	</form>
+    		{% endif %}
+	      	<ul class="nav navbar-nav navbar-right">
+		      	{% if user.is_authenticated %}
+		      		<li><a href="#">Hello, {{user.username}}!</a></li>
+	      			<li><a href="{% url 'logout' %}">Sign out</a></li>
+	      		{% else %}
+		        	<li><a href="{% url 'login' %}">Sign in</a></li>
+		      	{% endif %}
+	      	</ul>
+	    </div>
+	  </div>
+	</nav>
+	<!-- End navigation block-->
+
+	<!-- Start main content block-->
+	{% block premain %}
+	{% endblock premain %}
+
+	{% block main %}
+
+	{% endblock main %}
+	<!-- End main content block-->
+
+	<footer>
+		<div class="container">
+			<a href="{% url 'contact' %}" class="footer-menu-link">Contact us</a><br/>
+			The smart organizer is <a href="http://imagga.com">powered by Imagga</a>.
+		</div>
+	</footer>
+
+	<script src="{% static "js/vendor/jquery.min.js" %}"></script>
+	<script src="{% static "js/vendor/respond.min.js" %}"></script>
+	<script src="{% static "js/flat-ui.min.js" %}"></script>
+</body>
+</html>

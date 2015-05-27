@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="col-md-4 col-md-offset-4 login-form">
+    <form method="POST" action="{% url 'contact' %}" role="form">
+        {% csrf_token %}
+        <div class="form-group">
+          <input type="text" class="form-control login-field" name="sender_name" value="" placeholder="Name" id="contact-name">
+          <label class="login-field-icon fui-user" for="contact-name"></label>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control login-field" name="email" value="" placeholder="Email" id="contact-email">
+          <label class="login-field-icon fui-user" for="contact-email"></label>
+        </div>
+        <div class="form-group">
+          <textarea rows="10" class="form-control login-field" name="message" placeholder="Message" id="contact-name"></textarea>
+          <label class="login-field-icon fui-user" for="contact-name"></label>
+        </div>
+
+        <input type="submit" value="Send" class="btn btn-primary btn-lg btn-block"/>
+    </form>
+</div>
+
+{% endblock main %}

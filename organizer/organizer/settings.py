@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CLOUD_DATA = {
+    'dropbox': {
+        'key': 'jnswevz2ufiznh8',
+        'secret': 'svvsa8q7hj6vnly'
+    }
+}
 
 # Application definition
 
@@ -39,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'website',
+    'cloud'
 )
 
 MIDDLEWARE_CLASSES = (

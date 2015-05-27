@@ -8,6 +8,7 @@ import re
 from website.send_new_password import generate_new_password, send_reset_password, send_feedback
 from website.sending_settings import SENDER_EMAIL
 from organizer import settings
+from cloud.models import Access
 
 # Create your views here.
 
@@ -113,6 +114,8 @@ def password_reset(request):
 
 @login_required(login_url="login")
 def organizer(request):
+    access = Access.objects.get(user=request.user, access_type="dropbox")
+    dropbox_access_token = access.access_token if access else None
     return render(request, "organizer.html", locals())
 
 

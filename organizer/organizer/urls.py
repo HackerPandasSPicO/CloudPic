@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from website import urls
+from website import urls as website_urls
+from cloud import urls as cloud_urls
+
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include(urls)),
+    url(r'^', include(website_urls)),
+    url(r'^cloud/', include(cloud_urls)),
 ]

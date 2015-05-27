@@ -9,7 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static "styles/main.css" %}">
 
 </head>
-<body class="container-fluid">
+<body>
 
 	<!-- Start navigation block-->
 	<nav class="navbar navbar-inverse navbar-embossed" style="border-radius: 0px;">
@@ -50,13 +50,15 @@
 	{% block premain %}
 	{% endblock premain %}
 
+	<div class="container-fluid">
 	{% block main %}
 
 	{% endblock main %}
+	</div>
 	<!-- End main content block-->
 
 	<footer>
-		<div class="container">
+		<div class="container-fluid">
 			<a href="{% url 'contact' %}" class="footer-menu-link">Contact us</a><br/>
 			The smart organizer is <a href="http://imagga.com">powered by Imagga</a>.
 		</div>

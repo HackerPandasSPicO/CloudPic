@@ -84,7 +84,7 @@ def user_login(request):
         else:
             # TODO: Make some message for this
             login_error = "Wrong username or password!"
-            return redirect("register")
+            return redirect("login")
 
     else:
         return render(request, "login.html", locals())
@@ -124,3 +124,20 @@ def contact(request):
         send_feedback(SENDER_EMAIL, message, name, email)
 
     return render(request, "contact.html", locals())
+
+
+@login_required(login_url="login")
+def change_password(request):
+    if request.method == "POST":
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+        if new_password == confirm_password:
+            request.user.set_password(new_password)
+            request.user.save()
+            return redirect("organizer")
+        else:
+            change_password_error = "Password doesn't match the confirmation!"
+            return redirect("register")
+
+    else:
+        return render(request, "change_password.html", locals())

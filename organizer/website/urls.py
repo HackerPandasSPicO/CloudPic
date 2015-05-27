@@ -8,5 +8,6 @@ urlpatterns = patterns('website.views',
                        url(r"^organizer/", 'organizer', name="organizer"),
                        url(r"^logout/$", 'organizer_logout', name="logout"),
                        url(r"^contact/$", 'contact', name="contact"),
-                       url(r"^password_reset/$", 'password_reset', name="password_reset")
+                       url(r"^password_reset/$", 'password_reset', name="password_reset"),
+                       url(r"^change_password/$", 'change_password', name="change_password")
                        )

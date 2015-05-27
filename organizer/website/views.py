@@ -113,6 +113,7 @@ def password_reset(request):
 
 @login_required(login_url="login")
 def organizer(request):
+    categories = settings.CATEGORIES
     return render(request, "organizer.html", locals())
 
 

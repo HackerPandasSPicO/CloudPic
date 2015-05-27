@@ -36,6 +36,7 @@
 		      	{% if user.is_authenticated %}
 		      		<li><a href="#">Hello, {{user.username}}!</a></li>
 	      			<li><a href="{% url 'logout' %}">Sign out</a></li>
+	      			<li><a href="{% url 'change_password' %}">Change password</a></li>
 	      		{% else %}
 		        	<li><a href="{% url 'login' %}">Sign in</a></li>
 		      	{% endif %}

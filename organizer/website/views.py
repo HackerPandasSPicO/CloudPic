@@ -12,6 +12,8 @@ from website.sending_settings import SENDER_EMAIL
 from organizer import settings
 from cloud.models import Access
 from website.tagger import Tagger
+from django.template import RequestContext
+from .models import *
 
 # Create your views here.
 tagger = Tagger()
@@ -155,3 +157,29 @@ def change_password(request):
 
     else:
         return render(request, "change_password.html", locals())
+
+
+def search_tags(request):
+    if request.method == "POST":
+        tag = request.POST.get("search-tag")
+
+        if Image_Tag.objects.filter(tag_id=tag).exists():
+            pics_from_Img_tag = Image_Tag.objects.get(tag_id=tag)
+
+            image_ids = []
+
+            for item in pics_from_Img_tag:
+                image_id = item.image_id
+                image_ids.add(image_id)
+
+            list_of_urls = []
+
+            for image_id in image_ids:
+                image = Image.objects.get(user_id=image_id)
+                url = image.url
+                list_of_urls.add(url)
+        else:
+            message = "No results found!"
+    return render(request, "organizer.html", locals())
+
+

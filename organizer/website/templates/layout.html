@@ -26,9 +26,9 @@
 
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     		{% if user.is_authenticated %}
-    			<form class="navbar-form navbar-left" role="search">
+    			<form method="POST" class="navbar-form navbar-left" role="search">
 		            <div class="form-group">
-		              <input type="text" class="form-control" placeholder="Search for images">
+		              <input type="text" class="form-control" name="search-tags" placeholder="Search for images">
 		            </div>
 	          	</form>
     		{% endif %}

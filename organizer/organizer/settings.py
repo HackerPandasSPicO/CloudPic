@@ -109,3 +109,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CATEGORIES = [
+    'Sunrises / Sunsets',
+    'Beaches / Seaside',
+    'Text / Visuals',
+    'Events / Parties',
+    'Cars / Vehicles',
+    'Paintings / Art',
+    'Macro / Flowers',
+    'Food / Drinks',
+    'Pets / Animals',
+    'Interior / Objects',
+    'Streetview / Architecture',
+    'Nature / Landscape',
+    'People / Portraits'
+]

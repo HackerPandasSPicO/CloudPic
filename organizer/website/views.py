@@ -3,14 +3,18 @@ from django.http import HttpResponseBadRequest
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
 # from django.core.mail import send_mail
+
 import re
 from website.send_new_password import generate_new_password, send_reset_password, send_feedback
 from website.sending_settings import SENDER_EMAIL
 from organizer import settings
 from cloud.models import Access
+from website.tagger import Tagger
 
 # Create your views here.
+tagger = Tagger()
 
 
 def organizer_logout(request):
@@ -84,7 +88,7 @@ def user_login(request):
             return redirect("organizer")
         else:
             # TODO: Make some message for this
-            login_error = "Wrong username or password!"
+            request.session['message'] = {'type': 1, 'content': "Wrong username or password!"}
             return redirect("login")
 
     else:
@@ -116,6 +120,8 @@ def password_reset(request):
 def organizer(request):
     access = Access.objects.get(user=request.user, access_type="dropbox")
     dropbox_access_token = access.access_token if access else None
+    categories = settings.CATEGORIES
+    data = tagger.get_tags_for_pic_from_url('http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
     return render(request, "organizer.html", locals())
 
 
@@ -132,15 +138,19 @@ def contact(request):
 @login_required(login_url="login")
 def change_password(request):
     if request.method == "POST":
+        old_password = request.POST.get("old_password")
         new_password = request.POST.get("new_password")
         confirm_password = request.POST.get("confirm_password")
+        if not request.user.check_password(old_password):
+            request.session['message'] = {'type': 1, 'content': "Wrong password!"}
+            return redirect("change_password");
         if new_password == confirm_password:
             request.user.set_password(new_password)
             request.user.save()
             return redirect("organizer")
         else:
-            change_password_error = "Password doesn't match the confirmation!"
-            return redirect("register")
+            request.session['message'] = {'type': 1, 'content': "Password doesn't match the confirmation!"}
+            return redirect("change_password")
 
     else:
         return render(request, "change_password.html", locals())

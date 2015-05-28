@@ -171,8 +171,10 @@ def search_tags(request):
         tag = request.POST.get("search-tags")
         tags_ids = Tag.objects.filter(tag_name__icontains=tag).values_list('id', flat=True)
         if len(tags_ids) > 0:
+            current_user = request.user
+            user_id = current_user.id
             image_ids = Image_Tag.objects.filter(tag__in=tags_ids).values_list('image_id', flat=True)
-            images = Image.objects.filter(id__in=image_ids)
+            images = Image.objects.filter(id__in=image_ids).filter(user_id=user_id)
         else:
             message = "No results found!"
     return render(request, "organizer.html", locals())

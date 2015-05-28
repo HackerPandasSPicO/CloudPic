@@ -3,7 +3,7 @@ from django.http import HttpResponseBadRequest
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-#from django.core.mail import send_mail
+# from django.core.mail import send_mail
 import re
 from website.send_new_password import generate_new_password, send_reset_password, send_feedback
 from website.sending_settings import SENDER_EMAIL

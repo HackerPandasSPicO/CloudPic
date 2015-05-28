@@ -101,17 +101,18 @@ def password_reset(request):
 
     if request.method == "POST":
         email = request.POST.get("email")
-        user = User.objects.get(email=email)
-        if user is not None:
-            new_password = generate_new_password()
-            send_reset_password(email, new_password)
-            user.set_password(new_password)
-            user.save()
-            return redirect("login")
-        else:
+        try:
+            user = User.objects.get(email=email)
+            if user is not None:
+                new_password = generate_new_password()
+                send_reset_password(email, new_password)
+                user.set_password(new_password)
+                user.save()
+                return redirect("login")
+        except:
             reset_password_error = "Wrong E-mail!!"
+            request.session['message'] = {'type': 1, 'content': "Wrong E-mail!"}
             return redirect("password_reset")
-
     else:
         return render(request, "password_reset.html", locals())
 

@@ -118,7 +118,7 @@ def password_reset(request):
 
 @login_required(login_url="login")
 def organizer(request):
-    access = Access.objects.get(user=request.user, access_type="dropbox")
+    access = Access.objects.filter(user=request.user, access_type="dropbox")
     dropbox_access_token = access.access_token if access else None
     categories = settings.CATEGORIES
     data = tagger.get_tags_for_pic_from_url('http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
@@ -143,7 +143,7 @@ def change_password(request):
         confirm_password = request.POST.get("confirm_password")
         if not request.user.check_password(old_password):
             request.session['message'] = {'type': 1, 'content': "Wrong password!"}
-            return redirect("change_password");
+            return redirect("change_password")
         if new_password == confirm_password:
             request.user.set_password(new_password)
             request.user.save()

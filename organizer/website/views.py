@@ -12,6 +12,8 @@ from website.sending_settings import SENDER_EMAIL
 from organizer import settings
 from cloud.models import Access
 from website.tagger import Tagger
+from django.template import RequestContext
+from .models import *
 
 # Create your views here.
 tagger = Tagger()
@@ -88,7 +90,8 @@ def user_login(request):
             return redirect("organizer")
         else:
             # TODO: Make some message for this
-            request.session['message'] = {'type': 1, 'content': "Wrong username or password!"}
+            request.session['message'] = {
+                'type': 1, 'content': "Wrong username or password!"}
             return redirect("login")
 
     else:
@@ -111,7 +114,8 @@ def password_reset(request):
                 return redirect("login")
         except:
             reset_password_error = "Wrong E-mail!!"
-            request.session['message'] = {'type': 1, 'content': "Wrong E-mail!"}
+            request.session['message'] = {
+                'type': 1, 'content': "Wrong E-mail!"}
             return redirect("password_reset")
     else:
         return render(request, "password_reset.html", locals())
@@ -122,7 +126,8 @@ def organizer(request):
     access = Access.objects.filter(user=request.user, access_type="dropbox")
     dropbox_access_token = access[0].access_token if len(access) else None
     categories = settings.CATEGORIES
-    data = tagger.get_tags_for_pic_from_url('http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
+    data = tagger.get_tags_for_pic_from_url(
+        'http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
     return render(request, "organizer.html", locals())
 
 
@@ -143,15 +148,33 @@ def change_password(request):
         new_password = request.POST.get("new_password")
         confirm_password = request.POST.get("confirm_password")
         if not request.user.check_password(old_password):
-            request.session['message'] = {'type': 1, 'content': "Wrong password!"}
+            request.session['message'] = {
+                'type': 1, 'content': "Wrong password!"}
             return redirect("change_password")
         if new_password == confirm_password:
             request.user.set_password(new_password)
             request.user.save()
             return redirect("organizer")
         else:
-            request.session['message'] = {'type': 1, 'content': "Password doesn't match the confirmation!"}
+            request.session['message'] = {
+                'type': 1, 'content': "Password doesn't match the confirmation!"
+            }
             return redirect("change_password")
 
     else:
         return render(request, "change_password.html", locals())
+
+
+@login_required(login_url="login")
+def search_tags(request):
+    if request.method == "POST":
+        tag = request.POST.get("search-tags")
+        tags_ids = Tag.objects.filter(tag_name__icontains=tag).values_list('id', flat=True)
+        if len(tags_ids) > 0:
+            current_user = request.user
+            user_id = current_user.id
+            image_ids = Image_Tag.objects.filter(tag__in=tags_ids).values_list('image_id', flat=True)
+            images = Image.objects.filter(id__in=image_ids).filter(user_id=user_id)
+        else:
+            message = "No results found!"
+    return render(request, "organizer.html", locals())

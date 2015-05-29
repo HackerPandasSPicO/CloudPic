@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Image(models.Model):
 
-    user_id = models.ForeignKey(User)
+    user = models.ForeignKey(User)
     url = models.CharField(max_length=500)
 
 
@@ -15,5 +15,5 @@ class Tag(models.Model):
 
 class Image_Tag(models.Model):
 
-    image_id = models.ForeignKey(Image)
-    tag_id = models.ForeignKey(Tag)
+    image = models.ForeignKey(Image)
+    tag = models.ForeignKey(Tag)

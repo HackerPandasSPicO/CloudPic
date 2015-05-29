@@ -10,7 +10,7 @@ Installation
 3. Activate the environment:
     [https://virtualenv.pypa.io/en/latest/userguide.html#activate-script](https://virtualenv.pypa.io/en/latest/userguide.html#activate-script)
 
-    For Windows: `env/bin/actiate.bat` or `python env/bin/activate_this.py`
+    For Windows: `env/bin/activate.bat` or `python env/bin/activate_this.py`
     For Linux: `source env/bin/activate`
 4. Install all required packages:
     `pip install -r requirements.txt`

@@ -7,13 +7,14 @@ from .organizer import Organizer
 
 @shared_task
 def organize_personal_photos(user):
-    task = OrganizingTask(user=user)
-    task.save()
+    if not len(OrganizingTask.objects.filter(user=user)):
+        task = OrganizingTask(user=user)
+        task.save()
 
-    try:
-        org = Organizer(user, task)
-        org.organize_personal_photos()
-    except:
-        pass
+        try:
+            org = Organizer(user, task)
+            org.organize_personal_photos()
+        except:
+            pass
 
-    task.delete()
+        task.delete()

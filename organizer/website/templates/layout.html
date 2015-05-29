@@ -1,8 +1,9 @@
+{% if not ajax %}
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="icon" 
-      type="image/png" 
+	<link rel="icon"
+      type="image/png"
       href="">
 	<title>Cloud-Photos-Organizer</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
@@ -56,13 +57,17 @@
 	<!-- End navigation block-->
 
 	<!-- Start main content block-->
+{% endif %}
 	{% block premain %}
 	{% endblock premain %}
 
+{% if not ajax %}
 	<div class="container-fluid">
+{% endif %}
 	{% block main %}
 
 	{% endblock main %}
+{% if not ajax %}
 	</div>
 	<!-- End main content block-->
 
@@ -76,5 +81,50 @@
 	<script src="{% static "js/vendor/jquery.min.js" %}"></script>
 	<script src="{% static "js/vendor/respond.min.js" %}"></script>
 	<script src="{% static "js/flat-ui.min.js" %}"></script>
+
+	<script>
+		$(function() {
+			var refresh = false;
+			function getStatus() {
+				setTimeout(function() {
+					$.get('/organizer/status/', function(data) {
+						if (!data.error)
+						{
+							$.get('/organizer/?ajax=1&show=2', function(data) {
+								$('#show-1').html(data);
+
+								$.get('/organizer/?ajax=1&show=1', function(data) {
+									$('#show-2').html(data);
+									refresh = true;
+									getStatus();
+								});
+							});
+						}
+						else
+						{
+							if (refresh)
+							{
+								$.get('/organizer/?ajax=1&show=2', function(data) {
+									$('#show-1').html(data);
+
+									$.get('/organizer/?ajax=1&show=1', function(data) {
+										$('#show-2').html(data);
+										refresh = false;
+										getStatus();
+									});
+								});
+							}
+							else
+							{
+								getStatus();
+							}
+						}
+					});
+				}, 1000);
+			}
+			getStatus();
+		});
+	</script>
 </body>
 </html>
+{% endif %}

@@ -26,7 +26,9 @@ class Organizer:
         self.task.save()
 
         for photo in photos:
-            if len(Image.objects.filter(cloud_path=photo["path"])):
+            if len(Image.objects.filter(cloud_path=photo["path"], user=self._user)):
+                self.task.progress += 1
+                self.task.save()
                 continue
 
             new_image = Image()
@@ -78,11 +80,9 @@ class Organizer:
         if not os.path.isdir(self._get_full_path(user_photos_dir)):
             os.makedirs(self._get_full_path(user_photos_dir))
 
-        photo_path = os.path.join(
-            user_photos_dir, photo_cloud_path.split('/')[-1])
+        photo_path = os.path.join(user_photos_dir, photo_cloud_path.split('/')[-1])
 
-        photo_thumbnail = dropbox.Dropbox.get_photo_thumbnail(
-            self._user, photo_cloud_path)
+        photo_thumbnail = dropbox.Dropbox.get_photo_thumbnail(self._user, photo_cloud_path)
 
         if photo_thumbnail:
             with open(self._get_full_path(photo_path), 'wb+') as image_photo:

@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 # from django.core.mail import send_mail
 
 import re
+import json
 from cloud.helpers import dropbox
 from website.send_new_password import generate_new_password, send_reset_password, send_feedback
 from website.sending_settings import SENDER_EMAIL
@@ -14,6 +15,7 @@ from organizer import settings
 from cloud.models import Access
 from website.tagger import Tagger
 from .models import Image, Category, OrganizingTask
+from django.http import HttpResponse
 from django.template import RequestContext
 
 # Create your views here.
@@ -128,16 +130,27 @@ def organize(request):
     organize_personal_photos.delay(request.user)
     return redirect(reverse('organizer'))
 
+@login_required(login_url="login")
+def organize_status(request):
+    task = OrganizingTask.objects.filter(user=request.user)
+    return HttpResponse(json.dumps(
+        {'progress': task[0].progress, 'all_images': task[0].all_images}
+        if len(task) else {'error': 1}
+    ), content_type="application/json")
 
 @login_required(login_url="login")
 def organizer(request):
+    ajax = request.GET.get('ajax')
+    show = request.GET.get('show')
+    show = int(show) if show else 0
+
     dropbox_access_token = dropbox.Dropbox.get_saved_access_token(request.user)
 
     task = OrganizingTask.objects.filter(user=request.user)
     if len(task):
         task = task[0]
 
-    categories = settings.CATEGORIES
+    categories = Category.get_user_categories(request.user)
     # data = tagger.get_tags_for_pic_from_url(
     #     'http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
     return render(request, "organizer.html", locals())
@@ -180,15 +193,10 @@ def change_password(request):
 @login_required(login_url="login")
 def search_tags(request):
     if request.method == "POST":
-        tag = request.POST.get("search-tags")
-        tags_ids = Tag.objects.filter(tag_name__icontains=tag).values_list('id', flat=True)
-        if len(tags_ids) > 0:
-            current_user = request.user
-            user_id = current_user.id
-            image_ids = Image_Tag.objects.filter(tag__in=tags_ids).values_list('image_id', flat=True)
-            images = Image.objects.filter(id__in=image_ids).filter(user_id=user_id)
-        else:
-            message = "No results found!"
+        tags = request.POST.get("search-tags")
+        found_images = Image.objects.all()
+        for tag in tags.split(','):
+            found_images = found_images.filter(tags__tag=tag.strip())
     return render(request, "organizer.html", locals())
 
 

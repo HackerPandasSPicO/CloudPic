@@ -8,6 +8,7 @@ urlpatterns = patterns(
     url(r"^login/$", 'user_login', name="login"),
     url(r"^organizer/$", 'organizer', name="organizer"),
     url(r"^organizer/organize/$", 'organize', name="organize"),
+    url(r"^organizer/status/$", 'organize_status', name="organize_status"),
     url(r"^logout/$", 'organizer_logout', name="logout"),
     url(r"^contact/$", 'contact', name="contact"),
     url(r"^password_reset/$", 'password_reset', name="password_reset"),

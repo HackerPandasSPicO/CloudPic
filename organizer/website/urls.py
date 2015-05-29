@@ -12,5 +12,6 @@ urlpatterns = patterns(
     url(r"^contact/$", 'contact', name="contact"),
     url(r"^password_reset/$", 'password_reset', name="password_reset"),
     url(r"^change_password/$", 'change_password', name="change_password"),
-    url(r"^search_tags/$", 'search_tags', name="search_tags")
+    url(r"^search_tags/$", 'search_tags', name="search_tags"),
+    url(r"^categories/([0-9]{1,4})$", 'categories', name="categories")
 )

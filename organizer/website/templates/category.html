@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="thumb-header">
+            <h6>{{category}}</h6>
+        </div>
+        {% for image in images %}
+        	<div class="col-xs-6 col-md-3">
+	            <a href="#" class="thumbnail single-thumb">
+	              <img data-src="holder.js/100%x180" alt="100%x180" src="{{image.url}}" data-holder-rendered="false" style="height: 180px; width: 100%; display: block;">
+	            </a>
+	        </div>
+        {% endfor %}
+</div>	
+{% endblock main %}

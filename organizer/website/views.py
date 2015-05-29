@@ -190,3 +190,17 @@ def search_tags(request):
         else:
             message = "No results found!"
     return render(request, "organizer.html", locals())
+
+
+@login_required(login_url="login")
+def categories(request, category_id):
+    if request.method == "GET":
+        current_user = request.user
+        user_id = current_user.id
+        category = Category.objects.filter(id=category_id).values_list('name', flat=True)
+        if len(category) == 0:
+            return redirect('organizer')
+        category = category[0].replace('_', ' / ').title()
+
+        images = Image.objects.filter(user_id=user_id).filter(category_id=category_id).order_by('-creation_date')
+    return render(request, "category.html", locals())

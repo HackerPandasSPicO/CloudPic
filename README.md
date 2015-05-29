@@ -18,3 +18,5 @@ Installation
     `python manage.py syncdb`
 6. Run:
     `python manage.py runserver`
+7. In a new console window, activate the environment using step 3 and then run:
+    `python start_celery.py`

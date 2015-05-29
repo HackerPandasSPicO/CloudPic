@@ -1,6 +1,7 @@
 import dropbox
 from django.core.urlresolvers import reverse
 from organizer import settings
+from cloud.models import Access
 
 
 class Dropbox:
@@ -34,3 +35,10 @@ class Dropbox:
             return False
         except dropbox.client.DropboxOAuth2Flow.ProviderException:
             return False
+
+    def get_user_photos(self, request):
+        access = Access.objects.filter(user=request.user, access_type="dropbox")
+        dropbox_access_token = access[0].access_token if len(access) else None
+
+        client = dropbox.DropboxClient(dropbox_access_token)
+        return client.search('/', '.jpeg')

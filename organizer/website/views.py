@@ -120,7 +120,7 @@ def password_reset(request):
 @login_required(login_url="login")
 def organizer(request):
     access = Access.objects.filter(user=request.user, access_type="dropbox")
-    dropbox_access_token = access.access_token if access else None
+    dropbox_access_token = access[0].access_token if len(access) else None
     categories = settings.CATEGORIES
     data = tagger.get_tags_for_pic_from_url('http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
     return render(request, "organizer.html", locals())

@@ -27,13 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-CLOUD_DATA = {
-    'dropbox': {
-        'key': 'jnswevz2ufiznh8',
-        'secret': 'svvsa8q7hj6vnly'
-    }
-}
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -43,9 +36,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djcelery',
+    'kombu.transport.django',
 
     'website',
-    'cloud'
+    'cloud',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -89,6 +84,9 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+BROKER_URL = 'django://'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 
 
 # Internationalization

@@ -8,8 +8,7 @@ from cloud.models import Access
 def connect_cloud(request, cloud_name):
     if request.method == "GET":
         if cloud_name == "dropbox":
-            cloud_object = dropbox.Dropbox()
-            auth_flow = cloud_object.get_auth_flow(request)
+            auth_flow = dropbox.Dropbox.get_auth_flow(request)
 
             return HttpResponseRedirect(auth_flow.start())
 
@@ -19,8 +18,7 @@ def connect_cloud(request, cloud_name):
 def authorize_cloud(request, cloud_name):
     if request.method == "GET":
         if cloud_name == "dropbox":
-            cloud_object = dropbox.Dropbox()
-            access_token = cloud_object.get_access_token(request)
+            access_token = dropbox.Dropbox.get_access_token(request)
 
             if access_token:
                 # Add access token to Access model

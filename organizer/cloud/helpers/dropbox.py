@@ -1,29 +1,48 @@
 import dropbox
 from django.core.urlresolvers import reverse
-from organizer import settings
+from website.sending_settings import CLOUD_DATA
 from cloud.models import Access
+
+NAME = 'dropbox'
 
 
 class Dropbox:
 
-    name = 'dropbox'
+    @staticmethod
+    def get_auth_flow(request, csrf=None):
+        redirect_uri = request.build_absolute_uri(
+            reverse('authorize_cloud', kwargs={'cloud_name': NAME}))
+        return dropbox.client.DropboxOAuth2Flow(
+            CLOUD_DATA[NAME]['key'],
+            CLOUD_DATA[NAME]['secret'],
+            redirect_uri,
+            {
+                'user': request.user.email,
+                'dropbox-auth-csrf-token': (request.META['CSRF_COOKIE']
+                                            if not csrf else csrf)
+            },
+            'dropbox-auth-csrf-token'
+        )
 
-    def __init__(self):
-        self._cloud_data = settings.CLOUD_DATA[self.name]
+    @staticmethod
+    def get_saved_access_token(user):
+        access = Access.objects.filter(
+            user=user, access_type="dropbox")
 
-    @property
-    def cloud_data(self):
-        return self._cloud_data
+        if len(access):
+            return access[0].access_token
 
-    def get_auth_flow(self, request, csrf=None):
-        redirect_uri = request.build_absolute_uri(reverse('authorize_cloud', kwargs={'cloud_name': self.name}))
-        return dropbox.client.DropboxOAuth2Flow(self._cloud_data['key'], self._cloud_data['secret'], redirect_uri,
-                                                {'user': request.user.email, 'dropbox-auth-csrf-token': request.META['CSRF_COOKIE'] if not csrf else csrf},
-                                                'dropbox-auth-csrf-token')
+        return None
 
-    def get_access_token(self, request):
+    @staticmethod
+    def get_access_token(request):
+        access_token = Dropbox.get_saved_access_token(request.user)
+        if access_token:
+            return access_token
+
         try:
-            access_token, user_id, url_state = self.get_auth_flow(request, request.GET.get('state')).finish(request.GET)
+            access_token, user_id, url_state = Dropbox.get_auth_flow(
+                request, request.GET.get('state')).finish(request.GET)
             return access_token
         except dropbox.client.DropboxOAuth2Flow.BadRequestException:
             return False
@@ -36,9 +55,17 @@ class Dropbox:
         except dropbox.client.DropboxOAuth2Flow.ProviderException:
             return False
 
-    def get_user_photos(self, request):
-        access = Access.objects.filter(user=request.user, access_type="dropbox")
-        dropbox_access_token = access[0].access_token if len(access) else None
+    @staticmethod
+    def get_user_photos(user):
+        client = dropbox.client.DropboxClient(
+            Dropbox.get_saved_access_token(user))
+        result = client.search('/', '.jpg')
+        return result
 
-        client = dropbox.DropboxClient(dropbox_access_token)
-        return client.search('/', '.jpeg')
+    @staticmethod
+    def get_photo_thumbnail(user, photo_path):
+        client = dropbox.client.DropboxClient(
+            Dropbox.get_saved_access_token(user))
+        thumbnail = client.thumbnail(photo_path, 'l')
+
+        return thumbnail

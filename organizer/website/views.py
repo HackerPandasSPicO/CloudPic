@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseBadRequest
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,13 +7,14 @@ from django.contrib.auth.decorators import login_required
 # from django.core.mail import send_mail
 
 import re
+from cloud.helpers import dropbox
 from website.send_new_password import generate_new_password, send_reset_password, send_feedback
 from website.sending_settings import SENDER_EMAIL
 from organizer import settings
 from cloud.models import Access
 from website.tagger import Tagger
+from .models import Image, Category, OrganizingTask
 from django.template import RequestContext
-from .models import *
 
 # Create your views here.
 tagger = Tagger()
@@ -122,12 +123,23 @@ def password_reset(request):
 
 
 @login_required(login_url="login")
+def organize(request):
+    from .tasks import organize_personal_photos
+    organize_personal_photos.delay(request.user)
+    return redirect(reverse('organizer'))
+
+
+@login_required(login_url="login")
 def organizer(request):
-    access = Access.objects.filter(user=request.user, access_type="dropbox")
-    dropbox_access_token = access[0].access_token if len(access) else None
+    dropbox_access_token = dropbox.Dropbox.get_saved_access_token(request.user)
+
+    task = OrganizingTask.objects.filter(user=request.user)
+    if len(task):
+        task = task[0]
+
     categories = settings.CATEGORIES
-    data = tagger.get_tags_for_pic_from_url(
-        'http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
+    # data = tagger.get_tags_for_pic_from_url(
+    #     'http://nutritioncheckup.com/wp-content/uploads/2014/09/apple.jpg')
     return render(request, "organizer.html", locals())
 
 

@@ -3,10 +3,14 @@
 <div class="index-box">
     <div class="container">
         <p style="text-align: center;">
-        {% if not dropbox_access_token %}
-            <a href="{% url 'connect_cloud' 'dropbox' %}" class="btn btn-lg btn-outline-inverse" style="text-align: center">Connect to Dropbox</a>
+        {% if task %}
+            Organizing {{ task.progress }} / {{ task.all_images }}
         {% else %}
-            <a href="#" class="btn btn-lg btn-outline-inverse" style="text-align: center">Organize Dropbox photos</a>
+            {% if not dropbox_access_token %}
+                <a href="{% url 'connect_cloud' 'dropbox' %}" class="btn btn-lg btn-outline-inverse" style="text-align: center">Connect to Dropbox</a>
+            {% else %}
+                <a href="{% url 'organize' %}" class="btn btn-lg btn-outline-inverse" style="text-align: center">Organize Dropbox photos</a>
+            {% endif %}
         {% endif %}
         </p>
     </div>

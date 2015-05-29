@@ -63,3 +63,4 @@ sending_settings.py
 *.sqlite3
 *.DS_Store
 .DS_Store
+organizer/website/static/users/*
